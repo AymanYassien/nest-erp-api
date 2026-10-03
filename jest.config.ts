@@ -15,7 +15,7 @@ const config: Config = {
     'src/modules/*/domain/**/*.ts',
     '!src/**/*.d.ts',
     '!src/**/index.ts',
-    '!src/common/testing/**',
+    '!src/**/testing/**',
   ],
   coverageDirectory: './coverage',
   coverageThreshold: {
