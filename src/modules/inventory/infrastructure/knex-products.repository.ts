@@ -129,7 +129,8 @@ export class KnexProductsRepository
   ): Promise<number | null> {
     // One conditional UPDATE: the row lock it takes serialises concurrent
     // writers, and the WHERE clause guarantees stock never goes negative.
-    const [row] = await this.active(tx)
+    // Soft-deleted rows are included so a cancelled order can still restock.
+    const [row] = await this.db(tx)<ProductRow>('products')
       .where({ id })
       .andWhere('stock', '>=', -delta)
       .update({

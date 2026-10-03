@@ -42,8 +42,9 @@ export abstract class ProductsRepository {
   /** Restores a soft-deleted product; null if there is none with that id. */
   abstract restore(id: string): Promise<Product | null>;
   /**
-   * Atomically adds `delta` to the stock. Returns the new stock, or null when
-   * the product is missing or the change would make stock negative.
+   * Atomically adds `delta` to the stock, including on soft-deleted products.
+   * Returns the new stock, or null when the product does not exist or the
+   * change would make stock negative.
    */
   abstract adjustStock(
     id: string,

@@ -14,6 +14,7 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
+import { OrdersModule } from './modules/orders/orders.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -44,6 +45,7 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     AuthModule,
     InventoryModule,
+    OrdersModule,
   ],
   providers: [
     // Guards run in this order: rate limit, authenticate, then authorize.
