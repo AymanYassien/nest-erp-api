@@ -41,7 +41,7 @@ flowchart LR
 
     MW --> C
 
-    subgraph Module ["modules/&lt;name&gt;"]
+    subgraph Module ["modules/*"]
         direction TB
         C["presentation/<br/>controllers"] --> S["application/<br/>services, DTOs"]
         S --> D["domain/<br/>entities, rules, repository ports"]
@@ -364,7 +364,7 @@ sequenceDiagram
     C->>A: POST /auth/refresh {T1}
     A->>DB: T1 already revoked → revoke all of family F
     A-->>C: 401 Refresh token reuse detected
-    Note over C,DB: T2 is now dead too; the user must log in again
+    Note over C,DB: T2 is now dead too, so the user must log in again
 ```
 
 - **Opaque tokens, hashed at rest**: refresh tokens are 384-bit random strings, not JWTs, because they are only ever checked against the database. Only their SHA-256 hash is stored, so a database leak does not expose usable tokens. SHA-256 is safe here, unlike for passwords, because the input has high entropy, and a deterministic hash allows indexed lookup.
