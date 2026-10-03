@@ -1,13 +1,13 @@
 import {
   CallHandler,
   ExecutionContext,
-  HttpException,
   Injectable,
   Logger,
   NestInterceptor,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { Observable, tap } from 'rxjs';
+import { normalizeException } from '../filters/normalize-exception';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -25,8 +25,7 @@ export class LoggingInterceptor implements NestInterceptor {
           this.logger.log(this.format(request, statusCode, startedAt));
         },
         error: (error: unknown) => {
-          const status =
-            error instanceof HttpException ? error.getStatus() : 500;
+          const { status } = normalizeException(error);
           this.logger.warn(this.format(request, status, startedAt));
         },
       }),

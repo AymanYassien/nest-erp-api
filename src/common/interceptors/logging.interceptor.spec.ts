@@ -1,5 +1,6 @@
 import { CallHandler, Logger, NotFoundException } from '@nestjs/common';
 import { lastValueFrom, of, throwError } from 'rxjs';
+import { InvalidStatusTransitionError } from '../errors/domain.errors';
 import { mockExecutionContext } from '../testing/mock-execution-context';
 import { LoggingInterceptor } from './logging.interceptor';
 
@@ -49,6 +50,23 @@ describe('LoggingInterceptor', () => {
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringMatching(/^POST \/things 404 \d+ms user=anonymous$/),
     );
+  });
+
+  it('logs domain errors with their mapped status', async () => {
+    const context = mockExecutionContext({
+      request: { method: 'PATCH', originalUrl: '/orders/1/status' },
+    });
+    const handler = {
+      handle: () =>
+        throwError(
+          () => new InvalidStatusTransitionError('pending', 'delivered'),
+        ),
+    } as CallHandler;
+
+    await expect(
+      lastValueFrom(interceptor.intercept(context, handler)),
+    ).rejects.toBeInstanceOf(InvalidStatusTransitionError);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining(' 409 '));
   });
 
   it('reports unknown errors as 500', async () => {

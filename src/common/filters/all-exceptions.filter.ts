@@ -1,21 +1,6 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import {
-  BusinessRuleError,
-  ConflictError,
-  DomainError,
-  InsufficientStockError,
-  InvalidStatusTransitionError,
-  NotFoundError,
-} from '../errors/domain.errors';
-import { isPostgresError, mapPostgresError } from './postgres-error.mapper';
+import { normalizeException } from './normalize-exception';
 
 export interface ErrorResponseBody {
   success: false;
@@ -32,23 +17,6 @@ export interface ErrorResponseBody {
   };
 }
 
-interface NormalizedError {
-  status: number;
-  code: string;
-  message: string;
-  details?: string[];
-}
-
-type DomainErrorClass = abstract new (...args: never[]) => DomainError;
-
-const DOMAIN_ERROR_STATUS: ReadonlyArray<[DomainErrorClass, HttpStatus]> = [
-  [NotFoundError, HttpStatus.NOT_FOUND],
-  [ConflictError, HttpStatus.CONFLICT],
-  [InsufficientStockError, HttpStatus.CONFLICT],
-  [InvalidStatusTransitionError, HttpStatus.CONFLICT],
-  [BusinessRuleError, HttpStatus.UNPROCESSABLE_ENTITY],
-];
-
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
@@ -57,7 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const http = host.switchToHttp();
     const request = http.getRequest<Request>();
     const response = http.getResponse<Response>();
-    const error = this.normalize(exception);
+    const error = normalizeException(exception);
 
     if (error.status >= 500) {
       this.logger.error(
@@ -81,53 +49,5 @@ export class AllExceptionsFilter implements ExceptionFilter {
       },
     };
     response.status(error.status).json(body);
-  }
-
-  private normalize(exception: unknown): NormalizedError {
-    if (exception instanceof HttpException) {
-      return this.fromHttpException(exception);
-    }
-    if (exception instanceof DomainError) {
-      return {
-        status:
-          DOMAIN_ERROR_STATUS.find(
-            ([type]) => exception instanceof type,
-          )?.[1] ?? HttpStatus.BAD_REQUEST,
-        code: exception.code,
-        message: exception.message,
-      };
-    }
-    if (isPostgresError(exception)) {
-      const mapped = mapPostgresError(exception);
-      if (mapped) return mapped;
-    }
-    // Never leak internals of unexpected errors to the client.
-    return {
-      status: HttpStatus.INTERNAL_SERVER_ERROR,
-      code: 'INTERNAL_ERROR',
-      message: 'Internal server error',
-    };
-  }
-
-  private fromHttpException(exception: HttpException): NormalizedError {
-    const status = exception.getStatus();
-    const response = exception.getResponse();
-    const code = (HttpStatus[status] as string | undefined) ?? 'HTTP_ERROR';
-
-    if (typeof response === 'string') {
-      return { status, code, message: response };
-    }
-
-    const { message } = response as { message?: string | string[] };
-    // ValidationPipe reports one message per invalid field.
-    if (Array.isArray(message)) {
-      return {
-        status,
-        code: 'VALIDATION_ERROR',
-        message: 'Request validation failed',
-        details: message,
-      };
-    }
-    return { status, code, message: message ?? exception.message };
   }
 }
