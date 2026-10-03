@@ -13,7 +13,7 @@ import {
   USER_SORT_FIELDS,
   type UserSortField,
 } from '../../domain/users.repository';
-import { ToBoolean, Trim } from './normalize';
+import { ToBoolean, Trim } from '../../../../common/validation/transforms';
 
 export class ListUsersQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({ enum: USER_SORT_FIELDS, default: 'createdAt' })

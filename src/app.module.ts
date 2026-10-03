@@ -13,6 +13,7 @@ import { AppConfigService } from './config/app-config.service';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -42,6 +43,7 @@ import { UsersModule } from './modules/users/users.module';
     HealthModule,
     UsersModule,
     AuthModule,
+    InventoryModule,
   ],
   providers: [
     // Guards run in this order: rate limit, authenticate, then authorize.

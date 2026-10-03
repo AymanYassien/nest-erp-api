@@ -7,7 +7,7 @@ import {
   Length,
 } from 'class-validator';
 import { Role } from '../../../../common/types/role.enum';
-import { Trim } from './normalize';
+import { Trim } from '../../../../common/validation/transforms';
 
 export class UpdateUserDto {
   @ApiPropertyOptional({ example: 'Jane Smith' })

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, Length } from 'class-validator';
-import { NormalizeEmail, Trim } from '../../../users/application/dto/normalize';
-import { IsStrongPassword } from '../../../users/application/dto/password.validator';
+import { NormalizeEmail, Trim } from '../../../../common/validation/transforms';
+import { IsStrongPassword } from '../../../../common/validation/is-strong-password';
 
 export class RegisterDto {
   @ApiProperty({ example: 'jane.doe@acme.com' })

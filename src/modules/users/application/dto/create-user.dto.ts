@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { Role } from '../../../../common/types/role.enum';
-import { NormalizeEmail, Trim } from './normalize';
-import { IsStrongPassword } from './password.validator';
+import { NormalizeEmail, Trim } from '../../../../common/validation/transforms';
+import { IsStrongPassword } from '../../../../common/validation/is-strong-password';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'jane.doe@acme.com' })
