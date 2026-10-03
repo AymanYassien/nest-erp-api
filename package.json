@@ -23,9 +23,10 @@
     "test:e2e": "node --experimental-vm-modules --no-warnings=ExperimentalWarning ./node_modules/jest/bin/jest.js --config ./test/jest-e2e.json --runInBand",
     "knex": "ts-node -P tsconfig.json ./node_modules/knex/bin/cli.js --knexfile src/database/knexfile.ts",
     "db:migrate": "npm run knex -- migrate:latest",
+    "db:migrate:prod": "knex --knexfile dist/database/knexfile.js migrate:latest",
     "db:rollback": "npm run knex -- migrate:rollback",
     "db:seed": "npm run knex -- seed:run",
-    "db:make-migration": "npm run knex -- migrate:make"
+    "db:make-migration": "npm run knex -- migrate:make -x ts --migrations-directory migrations"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.2",
