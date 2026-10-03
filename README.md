@@ -1,6 +1,6 @@
 # nest-erp-api
 
-[![CI](https://github.com/OWNER/nest-erp-api/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/nest-erp-api/actions/workflows/ci.yml)
+[![CI](https://github.com/AymanYassien/nest-erp-api/actions/workflows/ci.yml/badge.svg)](https://github.com/AymanYassien/nest-erp-api/actions/workflows/ci.yml)
 ![Node](https://img.shields.io/badge/node-%E2%89%A524.9-339933)
 ![NestJS](https://img.shields.io/badge/NestJS-12-E0234E)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -156,7 +156,7 @@ erDiagram
 ### 1. Install
 
 ```bash
-git clone https://github.com/OWNER/nest-erp-api.git
+git clone https://github.com/AymanYassien/nest-erp-api.git
 cd nest-erp-api
 nvm use
 npm install
